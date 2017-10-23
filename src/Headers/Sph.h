@@ -91,6 +91,7 @@ class Sph : public Hydrodynamics<ndim>
   using Hydrodynamics<ndim>::NPeriodicGhost;
   using Hydrodynamics<ndim>::Ntot;
   using Hydrodynamics<ndim>::types;
+  using Hydrodynamics<ndim>::max_dens; // (MERCER) : CLOUD COLLAPSE
 
   typedef typename SphParticle<ndim>::DensityParticle DensityParticle;
 
@@ -224,6 +225,7 @@ public:
   using Sph<ndim>::Nhydromax;
   using Sph<ndim>::sphdata_unsafe;
   using Sph<ndim>::tdavisc;
+  using Sph<ndim>::max_dens; // (MERCER) : CLOUD COLLAPSE
 
   using Hydrodynamics<ndim>::rho_sink;
   using Hydrodynamics<ndim>::sink_particles;

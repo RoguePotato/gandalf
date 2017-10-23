@@ -217,6 +217,13 @@ SimulationBase::SimulationBase
   rescale_particle_data = false;
   restart               = false;
   setup                 = false;
+  Ndensoutsnap          = 0;
+  // (MERCER) : CLOUD COLLAPSE
+  cur_max_dens          = -30.0f;
+  max_dens_start        = -18.0f;
+  max_dens_next         = max_dens_start;
+  max_dens_end          = -1.8f;
+  dens_step             = 0.2f;
 #if defined _OPENMP
   if (omp_get_dynamic()) {
     cout << "Warning: the dynamic adjustment of the number threads was on. "
@@ -579,6 +586,26 @@ string SimulationBase::Output(void)
   }
   //-----------------------------------------------------------------------------------------------
 
+  //-----------------------------------------------------------------------------------------------
+  // Output a data snapshot if a max. density is reached (MERCER) : CLOUD COLLAPSE
+  //-----------------------------------------------------------------------------------------------
+  if (simparams->intparams["cloud_output"] && cur_max_dens >= max_dens_next && max_dens_next <= max_dens_end) {
+    Ndensoutsnap++;
+    // Prepare filename for new snapshot
+    max_dens_next += dens_step;
+    nostring = "";
+    ss << setfill('0') << setw(2) << Ndensoutsnap;
+    nostring = ss.str();
+    ss.str(std::string());
+    ss << std::fixed << setprecision(1) << max_dens_start + ((Ndensoutsnap - 1) * dens_step);
+    filename = run_id + '.' + out_file_form + ".dens." + nostring + "." + ss.str();
+    ss.str(std::string());
+    WriteSnapshotFile(filename,out_file_form);
+
+    if (max_dens_next > max_dens_end) {
+      kill_simulation = true;
+    }
+  }
 
   // Output diagnostics to screen if passed sufficient number of block steps
   if (Nblocksteps%ndiagstep == 0 && n%nresync == 0) {

@@ -538,6 +538,8 @@ void Parameters::SetDefaultValues(void)
   floatparams["r_bdwarf"] = 0.2;
   floatparams["r_planet"] = 0.075;
 
+  // (MERCER) : CLOUD COLLAPSE
+  intparams["cloud_output"] = 0;
   return;
 }
 

@@ -131,7 +131,7 @@ public:
   bool newParticles;                   ///< Have new ptcls been added? If so, flag to rebuild tree
   int create_sinks;                    ///< Create new sink particles?
   int sink_particles;                  ///< Are using sink particles?
-  
+
   int Ngather;                         ///< No. of gather neighbours
   int Nghost;                          ///< No. of ghost particles (total among all kinds of ghosts)
   int NImportedParticles;              ///< No. of imported particles
@@ -151,7 +151,7 @@ public:
   SmoothingKernel<ndim> *kernp;        ///< Pointer to chosen kernel object
   TabulatedKernel<ndim> kerntab;       ///< Tabulated version of chosen kernel
   ExternalPotential<ndim> *extpot;     ///< Pointer to external potential object
-
+  DOUBLE max_dens; // (MERCER) : CLOUD COLLAPSE
 };
 
 template<int ndim>

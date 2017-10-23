@@ -59,6 +59,7 @@ GradhSph<ndim, kernelclass>::GradhSph(int hydro_forces_aux, int self_gravity_aux
 {
   this->kernp      = &kern;
   this->kernrange  = this->kernp->kernrange;
+  max_dens = -1E30; // (MERCER) : CLOUD COLLAPSE
 }
 
 
@@ -207,6 +208,8 @@ int GradhSph<ndim, kernelclass>::ComputeH
     parti.rho      *= parti.hfactor;
     parti.invomega *= parti.hfactor;
     parti.zeta     *= invhsqd;
+
+    if (parti.rho > max_dens) max_dens = parti.rho; // (MERCER) : CLOUD COLLAPSE
 
     // Density must at least equal its self-contribution
     // (failure could indicate neighbour list problem)

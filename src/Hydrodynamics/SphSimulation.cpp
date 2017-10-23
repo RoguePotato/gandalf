@@ -875,6 +875,7 @@ void SphSimulation<ndim>::MainLoop(void)
   // End-step terms for all star particles
   if (nbody->Nstar > 0) nbody->EndTimestep(n, nbody->Nnbody, t, timestep, nbody->nbodydata);
 
+  cur_max_dens = log10(this->hydro->max_dens * simunits.rho.outscale * simunits.rho.outcgs); // (MERCER) : CLOUD COLLAPSE
 
   return;
 }

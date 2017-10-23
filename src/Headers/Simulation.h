@@ -222,6 +222,14 @@ class SimulationBase
   string out_file_form;                ///< Output snapshot file format
   string paramfile;                    ///< Name of parameters file
   string run_id;                       ///< Simulation id string
+  // (MERCER) : CLOUD COLLAPSE
+  int Ndensoutsnap;                    ///< Current density snapshot
+  bool update_max_dens;
+  FLOAT cur_max_dens;                  ///< Current max. log(density)
+  FLOAT max_dens_next;                 ///< Next maximum density to check
+  FLOAT max_dens_start;                ///< Start outputting at this density
+  FLOAT max_dens_end;                  ///< End the simulation after this is reached
+  FLOAT dens_step;                     ///< Density increase step
 
   Parameters* simparams;               ///< Simulation parameters object (pointer)
   SimUnits simunits;                   ///< Simulation units object
@@ -416,6 +424,8 @@ class SphSimulation : public Simulation<ndim>
   using Simulation<ndim>::neib;
   using Simulation<ndim>::radiation;
   using Simulation<ndim>::radfb;
+  using Simulation<ndim>::cur_max_dens; // (MERCER) : CLOUD COLLPSE
+  using Simulation<ndim>::update_max_dens;
 #ifdef MPI_PARALLEL
   using Simulation<ndim>::mpicontrol;
   using Simulation<ndim>::MpiGhosts;

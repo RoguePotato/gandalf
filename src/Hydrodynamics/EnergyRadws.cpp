@@ -447,6 +447,7 @@ FLOAT EnergyRadws<ndim,ParticleType>::GetCol2
     }
     P = eos->Pressure(part);
 
+    // ahydro - avisc
     return (fcol2 * P * P) / (ahydro + small_number);
   }
 }
