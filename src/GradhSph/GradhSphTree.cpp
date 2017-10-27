@@ -398,6 +398,7 @@ void GradhSphTree<ndim,ParticleType>::UpdateAllSphHydroForces
         for (int k=0; k<ndim; k++) sphdata[i].a[k]     += activepart[j].a[k];
         for (int k=0; k<ndim; k++) sphdata[i].a[k]     += activepart[j].atree[k];
         for (int k=0; k<ndim; k++) sphdata[i].atree[k] += activepart[j].atree[k];
+        for (int k=0; k<ndim; k++) sphdata[i].ahydro[k]+= activepart[j].ahydro[k]; // (MERCER) : HYDRODYNAMICAL ACCELERATION
         sphdata[i].gpot     += activepart[j].gpot;
         sphdata[i].dudt     += activepart[j].dudt;
         sphdata[i].dalphadt += activepart[j].dalphadt;
@@ -512,6 +513,7 @@ void GradhSphTree<ndim,ParticleType>::UpdateAllSphForces
         activepart[j].gpot      = (activepart[j].m/activepart[j].h)*sph->kernp->wpot(0.0);
         for (int k=0; k<ndim; k++) activepart[j].a[k]     = (FLOAT) 0.0;
         for (int k=0; k<ndim; k++) activepart[j].atree[k] = (FLOAT) 0.0;
+        for (int k=0; k<ndim; k++) activepart[j].ahydro[k] = (FLOAT) 0.0; // (MERCER) : HYDRODYNAMICAL ACCELERATION
       }
 
       // Compute neighbour list for cell depending on physics options
@@ -612,6 +614,7 @@ void GradhSphTree<ndim,ParticleType>::UpdateAllSphForces
         for (int k=0; k<ndim; k++) sphdata[i].a[k]     += activepart[j].a[k];
         for (int k=0; k<ndim; k++) sphdata[i].a[k]     += activepart[j].atree[k];
         for (int k=0; k<ndim; k++) sphdata[i].atree[k] += activepart[j].atree[k];
+        for (int k=0; k<ndim; k++) sphdata[i].ahydro[k] += activepart[j].ahydro[k]; // (MERCER) : HYDRODYNAMICAL ACCELERATION
         sphdata[i].gpot  += activepart[j].gpot;
         sphdata[i].gpot_hydro += activepart[j].gpot_hydro;
         sphdata[i].dudt  += activepart[j].dudt;

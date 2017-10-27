@@ -419,6 +419,7 @@ void SphSimulation<ndim>::PostInitialConditionsSetup(void)
       part.gpot      = (FLOAT) 0.0;
       for (k=0; k<ndim; k++) part.a[k] = (FLOAT) 0.0;
       for (k=0; k<ndim; k++) part.atree[k] = (FLOAT) 0.0;
+      for (k=0; k<ndim; k++) part.ahydro[k] = (FLOAT) 0.0; // (MERCER) : HYDRODYNAMICAL ACCELERATION
     }
 
     // Calculate all SPH properties

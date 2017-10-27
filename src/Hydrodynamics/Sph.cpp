@@ -135,6 +135,7 @@ void Sph<ndim>::ZeroAccelerations()
       part.gpot_hydro= (FLOAT) 0.0;
       for (int k=0; k<ndim; k++) part.a[k] = (FLOAT) 0.0;
       for (int k=0; k<ndim; k++) part.atree[k] = (FLOAT) 0.0;
+      for (int k=0; k<ndim; k++) part.ahydro[k] = (FLOAT) 0.0; // (MERCER) : HYDRODYNAMICAL ACCELERATION
     }
   }
 }

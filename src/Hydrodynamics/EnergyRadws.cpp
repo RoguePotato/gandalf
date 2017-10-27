@@ -443,7 +443,8 @@ FLOAT EnergyRadws<ndim,ParticleType>::GetCol2
   else {
     FLOAT P = 0.0, ahydro = 0.0;
     for (int k = 0; k < ndim; ++k) {
-      ahydro += pow(part.a[k] - part.atree[k], 2.0);
+      // ahydro += pow(part.a[k] - part.atree[k], 2.0);
+      ahydro += pow(part.ahydro[k], 2.0);
     }
     P = eos->Pressure(part);
 

@@ -521,6 +521,9 @@ void GradhSph<ndim, kernelclass>::ComputeSphHydroGravForces
     paux = ((parti.pressure*parti.invomega)/(parti.rho*parti.rho))*wkerni +
       ((neibpart[j].pressure*neibpart[j].invomega)/(neibpart[j].rho*neibpart[j].rho))*wkernj;
 
+    // ahydro
+    for (k=0; k<ndim; k++) parti.ahydro[k] += neibpart[j].m*dr[k]*paux;
+
     // Add dissipation terms (for approaching particle pairs)
     //---------------------------------------------------------------------------------------------
     if (dvdr < (FLOAT) 0.0) {
