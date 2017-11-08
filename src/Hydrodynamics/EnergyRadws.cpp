@@ -436,9 +436,10 @@ template <int ndim, template <int> class ParticleType>
 FLOAT EnergyRadws<ndim,ParticleType>::GetCol2
  (Particle<ndim> &part)
 {
+  FLOAT col2 = 0.0;
   if (!lombardi) {
     assert(part.gpot_hydro <= part.gpot);
-    return fcol2 * part.gpot_hydro * part.rho;
+    col2 = fcol2 * part.gpot_hydro * part.rho;
   }
   else {
     FLOAT P = 0.0, ahydro = 0.0;
@@ -448,9 +449,10 @@ FLOAT EnergyRadws<ndim,ParticleType>::GetCol2
     }
     P = eos->Pressure(part);
 
-    // ahydro - avisc
-    return (fcol2 * P * P) / (ahydro + small_number);
+    col2 =  (fcol2 * P * P) / (ahydro + small_number);
   }
+  part.pseudo_col = sqrt(col2);
+  return col2;
 }
 
 template class EnergyRadws<1, GradhSphParticle>;

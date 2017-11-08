@@ -1917,6 +1917,12 @@ bool Simulation<ndim>::WriteSerenUnformSnapshotFile(string filename)
                                                reinterpret_cast<FLOAT*>(buffer),
                                                types, simunits.u.outscale);
 
+    // (MERCER) : PSEUDO COLUMN DENSITY
+    //---------------------------------------------------------------------------------------------
+    WriteSerenFormArrayScalar_MPI<ndim, FLOAT>(file, hydro, &Particle<ndim>::pseudo_col,
+                                               reinterpret_cast<FLOAT*>(buffer),
+                                               types, simunits.sigma.outscale);
+
     MPI_Offset end;
     MPI_File_get_position(file, &end);
     assert((unsigned int) end ==
@@ -2220,6 +2226,9 @@ bool Simulation<ndim>::WriteSerenUnformSnapshotFile(string filename)
 
     // Specific internal energies
     WriteSerenUnformArrayScalar(writer, hydro, &Particle<ndim>::u, types, simunits.u.outscale);
+
+    // (MERCER) : PSEUDO COLUMN DENSITY
+    WriteSerenUnformArrayScalar(writer, hydro, &Particle<ndim>::pseudo_col, types, simunits.sigma.outscale);
 
   }
 

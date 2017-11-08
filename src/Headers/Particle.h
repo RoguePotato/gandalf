@@ -171,6 +171,7 @@ struct Particle
   FLOAT dt_therm;                   ///< thermalization time scale
   FLOAT vsig_max;                   ///< Maximum signal velocity.
   FLOAT rad_pres[ndim];             ///< Acceleration from radiation pressure cmscott
+  FLOAT pseudo_col;                 ///< (MERCER) : PSEUDO COLUMN DENSITY
   int ionstate;                     ///< States current ionisation state of the particle
                                     ///< (0 is neutral, 1 is smoothed and 2 is ionised)
 
@@ -212,6 +213,7 @@ struct Particle
     ueq       = (FLOAT) 0.0;
     dt_therm  = (FLOAT) 0.0;
     vsig_max  = (FLOAT) 0.0;
+    pseudo_col= (FLOAT) 0.0; // (MERCER) : PSEUDO COLUMN DENSITY
   }
 
   static const int NDIM = ndim ;
