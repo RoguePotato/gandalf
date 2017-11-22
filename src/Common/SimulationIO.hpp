@@ -1490,6 +1490,11 @@ bool Simulation<ndim>::ReadSerenUnformSnapshotFile(string filename)
         Particle<ndim>& part = hydro->GetParticlePointer(i);
         reader.read_value(part.u);
       }
+      // (MERCER) : Read estimated column density
+      for (int i=0; i<hydro->Nhydro; i++) {
+        Particle<ndim>& part = hydro->GetParticlePointer(i);
+        reader.read_value(part.pseudo_col);
+      }
     }
 
     // Skip 1-D redundant information
