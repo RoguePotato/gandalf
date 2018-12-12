@@ -875,6 +875,19 @@ void SphSimulation<ndim>::MainLoop(void)
   // End-step terms for all star particles
   if (nbody->Nstar > 0) nbody->EndTimestep(n, nbody->Nnbody, t, timestep, nbody->nbodydata);
 
+  if (simparams->intparams["clump_tracking"]) {
+    // Perform clump finding if the time is right and the clump density is non-zero.
+    if (t > this->clump_start_search) {
+      sph->ClumpFind(nbody);
+      if (sph->clump_dens) {
+        clump_flag = sph->clump_flag;
+        clump_dens = log10(sph->clump_dens * simunits.rho.outscale *
+                            simunits.rho.outcgs);
+      }
+    } else {
+      clump_flag = -1;
+    }
+  }
 
   return;
 }

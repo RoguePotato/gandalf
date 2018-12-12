@@ -217,6 +217,10 @@ SimulationBase::SimulationBase
   rescale_particle_data = false;
   restart               = false;
   setup                 = false;
+  Nclumpoutput          = 0;
+  clump_start_search    = 0.0;
+  clump_flag            = -1;
+  clump_dens            = 0.0;
 #if defined _OPENMP
   if (omp_get_dynamic()) {
     cout << "Warning: the dynamic adjustment of the number threads was on. "
@@ -399,6 +403,10 @@ void SimulationBase::Run
 
     MainLoop();
     Output();
+
+    if (simparams->intparams["clump_tracking"]) {
+      ClumpOutput();
+    }
 
     // Special condition to check if maximum wall-clock time has been reached.
     if (kill_simulation || timing->RunningTime() > 0.95*tmax_wallclock) {
@@ -599,7 +607,35 @@ string SimulationBase::Output(void)
   return filename;
 }
 
+//=================================================================================================
+//  SimulationBase::ClumpOutput
+/// Controls when clump output snapshots are written by the code.
+//=================================================================================================
+string SimulationBase::ClumpOutput(void) {
+  string filename;  // Regular output snapshot filename
+  string idstring;  // String of ID for the clump
+  string nostring;  // String of number of snapshots
+  stringstream ss;  // Stream object for preparing filename
 
+  // Output a clump snapshot if the output flag contains a valid clump ID.
+  //-----------------------------------------------------------------------------------------------
+  if (clump_flag >= 0) {
+    nostring = "";
+    ss << setfill('0') << setw(6) << clump_flag;
+    idstring = ss.str();
+    ss.str(std::string());
+    ss << setfill('0') << setw(5) << Nclumpoutput++;
+    nostring = ss.str();
+    ss.str(std::string());
+    ss << std::fixed << setprecision(1) << clump_dens; 
+    filename =
+        run_id + '.' + out_file_form + ".clump." + idstring + '.' + nostring + '.' + ss.str();
+    WriteSnapshotFile(filename, out_file_form);
+    clump_flag = -1;
+  }
+
+  return filename;
+}
 
 //=================================================================================================
 //  SimulationBase::RestartSnapshot
@@ -613,30 +649,30 @@ void SimulationBase::RestartSnapshot(void)
   stringstream ss;                     // Stream object for preparing filename
   ofstream outfile;                    // Stream of restart file
 
-  debug2("[SimulationBase::RestartSnapshot]");
+    debug2("[SimulationBase::RestartSnapshot]");
 
-  // Prepare filename for new snapshot
-  filename = run_id + "." + out_file_form + ".tmp";
-  ss.str(std::string());
-  WriteSnapshotFile(filename,out_file_form);
+    // Prepare filename for new snapshot
+    filename = run_id + "." + out_file_form + ".tmp";
+    ss.str(std::string());
+    WriteSnapshotFile(filename,out_file_form);
 
-  // Now write name and format of snapshot to file (for restarts)
-  filename2 = run_id + ".restart";
-  outfile.open(filename2.c_str());
-  outfile << out_file_form << endl;
-  outfile << filename << endl;
-  outfile.close();
+    // Now write name and format of snapshot to file (for restarts)
+    filename2 = run_id + ".restart";
+    outfile.open(filename2.c_str());
+    outfile << out_file_form << endl;
+    outfile << filename << endl;
+    outfile.close();
 
-  return;
-}
+    return;
+  }
 
 
 
-//=================================================================================================
-//  SimulationBase::SetupSimulation
-/// Main function for setting up a new simulation.
-//=================================================================================================
-void SimulationBase::SetupSimulation(void)
+  //=================================================================================================
+  //  SimulationBase::SetupSimulation
+  /// Main function for setting up a new simulation.
+  //=================================================================================================
+  void SimulationBase::SetupSimulation(void)
 {
   debug1("[SimulationBase::Setup]");
 
@@ -1225,6 +1261,7 @@ void Simulation<ndim>::ProcessParameters(void)
   tend                = floatparams["tend"]/simunits.t.outscale;
   tlitesnapnext       = floatparams["tlitesnapfirst"]/simunits.t.outscale;
   tsnapnext           = floatparams["tsnapfirst"]/simunits.t.outscale;
+  clump_start_search  = floatparams["clump_start_search"]/simunits.t.outscale;
 
 }
 

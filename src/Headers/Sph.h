@@ -108,6 +108,7 @@ class Sph : public Hydrodynamics<ndim>
   virtual void AccreteMassFromParticle(const FLOAT dm, Particle<ndim> &part) {part.m -= dm;}
 
   virtual void ZeroAccelerations() ;
+  virtual void ClumpFind(Nbody<ndim> *);
 
 
 
@@ -158,6 +159,18 @@ class Sph : public Hydrodynamics<ndim>
   string riemann_solver;               ///< Selected Riemann solver
   string slope_limiter;                ///< Selected slope limiter
 
+  // Clump parameters.
+  //-----------------------------------------------------------------------------------------------
+  FLOAT rho_unit;
+  int Nclump;
+  int clumps[1024];
+  FLOAT clump_dens_step;
+  int clump_flag;
+  FLOAT clump_dens;
+  FLOAT clump_dens_min;
+  FLOAT clump_dens_max;
+  FLOAT clump_min_dist;
+  FLOAT clump_min_star_dist;
 };
 
 #if !defined(SWIG)

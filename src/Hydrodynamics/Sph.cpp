@@ -63,6 +63,15 @@ Sph<ndim>::Sph(int _hydro_forces, int _self_gravity, FLOAT _alpha_visc, FLOAT _b
   Ngather = 0;
   hmin_sink = big_number;
   conservative_sph_star_gravity = params->intparams["conservative_sph_star_gravity"];
+
+  // Set clump parameters.
+  Nclump = 0;
+  rho_unit = units.rho.outscale * units.rho.outcgs;
+  clump_dens_step = params->floatparams["clump_dens_step"];
+  clump_dens_min = pow10(params->floatparams["clump_dens_min"]) / rho_unit;
+  clump_dens_max = pow10(params->floatparams["clump_dens_max"]) / rho_unit;
+  clump_min_dist = params->floatparams["clump_min_dist"] / units.r.outscale;
+  clump_min_star_dist = params->floatparams["clump_min_star_dist"] / units.r.outscale;
 }
 
 
@@ -139,6 +148,75 @@ void Sph<ndim>::ZeroAccelerations()
   }
 }
 
+//=================================================================================================
+//  Sph::ClumpFind
+/// Performs the clump finding algorithm.
+//=================================================================================================
+template <int ndim>
+void Sph<ndim>::ClumpFind(Nbody<ndim> *nbody) {
+  assert(Nclump < 1024);
+
+  for (int i = 0; i < Nhydro; ++i) {
+    SphParticle<ndim> &part = GetSphParticlePointer(i);
+    bool too_close = false;
+
+
+    // Perform the density threshold check first. Reset it from being a clump if
+    // the max density threshold is reached.
+    if (part.rho < clump_dens_min || part.rho > clump_dens_max) {
+      part.clump = 1E30;
+      continue;
+    }
+    // Next perform a check see if the particle is too close to the star
+    // (where densities may be a little high).
+    if (Distance(part.r, nbody->stardata[0].r, 2) < clump_min_star_dist) {
+      continue;
+    }
+
+    // Check if near other clumps, provided there exists at least one clump.
+    for (int j = 0; j < Nclump && Nclump > 0; ++j) {
+      SphParticle<ndim> &clump = GetSphParticlePointer(clumps[j]);
+
+      // Don't let clumps be set when close to others.
+      // FLOAT dist = max(clump_min_dist, 5.0 * part.h);
+      if (Distance(part.r, clump.r, 2) < clump_min_dist || i == clumps[j]) {
+        too_close = true;
+        break;
+      }
+    }
+
+    // All tests passed to label the particle a clump. We must also update the
+    // clump array and the number of the clumps. Typically clumps should not
+    // be forming ofter, therefore the clump_flag and clump_dens should be
+    // find to update just once per timestep.
+    if (!too_close) {
+      clumps[Nclump++] = i;
+      part.clump = part.rho;
+    }
+  }
+
+  // Reset the clump flag.
+  clump_flag = -1;
+
+  // Subsequent density checks for output flag.
+  for (int i = 0; i < Nclump; ++i) {
+    SphParticle<ndim> &part = GetSphParticlePointer(clumps[i]);
+
+    // FIXME: This stepping needs to be corrected. Probably want to round the
+    // value to nearest density step.
+    if (log10(part.rho * rho_unit) > log10(part.clump * rho_unit) + clump_dens_step) {
+      part.clump = part.rho;
+
+      // TODO: Could always pass through i as a clump_flag? Would require more
+      // recording in the restart file. Output in restart file the clump
+      // particle ID and its current number.
+      clump_dens = part.clump;
+      clump_flag = part.iorig;
+      break;
+    }
+    // TODO: Else if the density down by some amount, stop it being a clump?
+  } 
+}
 
 template class Sph<1>;
 template class Sph<2>;

@@ -124,6 +124,7 @@ class SimulationBase
   string GetParam(string key);
   list<SphSnapshotBase*> InteractiveRun(int=-1);
   string Output(void);
+  string ClumpOutput(void);
   void RestartSnapshot(void);
   void Run(int=-1);
   void SetParam(string key, string value);
@@ -222,6 +223,12 @@ class SimulationBase
   string out_file_form;                ///< Output snapshot file format
   string paramfile;                    ///< Name of parameters file
   string run_id;                       ///< Simulation id string
+  int Nclumpoutput;                    ///< Current number of clump outputs.
+  FLOAT clump_start_search;            ///< Time to start clump finding.
+  int clump_flag;                      ///< Identifier of clump to write from part
+                                       ///< ID. -1 means no write.
+  FLOAT clump_dens;                    ///< Stores the current clump density as a
+                                       ///< log10 value.
 
   Parameters* simparams;               ///< Simulation parameters object (pointer)
   SimUnits simunits;                   ///< Simulation units object
@@ -416,6 +423,8 @@ class SphSimulation : public Simulation<ndim>
   using Simulation<ndim>::neib;
   using Simulation<ndim>::radiation;
   using Simulation<ndim>::radfb;
+  using Simulation<ndim>::clump_flag;
+  using Simulation<ndim>::clump_dens;
 #ifdef MPI_PARALLEL
   using Simulation<ndim>::mpicontrol;
   using Simulation<ndim>::MpiGhosts;

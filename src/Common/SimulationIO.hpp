@@ -1490,6 +1490,14 @@ bool Simulation<ndim>::ReadSerenUnformSnapshotFile(string filename)
         Particle<ndim>& part = hydro->GetParticlePointer(i);
         reader.read_value(part.u);
       }
+
+      // Read the clump flags here.
+      if (simparams->intparams["clump_tracking"]) {
+        for (int i = 0; i < hydro->Nhydro; i++) {
+          Particle<ndim> &part = hydro->GetParticlePointer(i);
+          reader.read_value(part.clump);
+        }
+      }
     }
 
     // Skip 1-D redundant information
@@ -2220,6 +2228,10 @@ bool Simulation<ndim>::WriteSerenUnformSnapshotFile(string filename)
     // Specific internal energies
     WriteSerenUnformArrayScalar(writer, hydro, &Particle<ndim>::u, types, simunits.u.outscale);
 
+    // Clump flag
+    if (simparams->intparams["clump_tracking"]) {
+      WriteSerenUnformArrayScalar(writer, hydro, &Particle<ndim>::clump, types);
+    }
   }
 
 

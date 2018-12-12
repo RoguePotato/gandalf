@@ -539,6 +539,16 @@ void Parameters::SetDefaultValues(void)
   floatparams["r_bdwarf"] = 0.2;
   floatparams["r_planet"] = 0.075;
 
+  // Clump parameters
+  //-----------------------------------------------------------------------------------------------
+  intparams["clump_tracking"] = 0;
+  floatparams["clump_start_search"] = 0.0;
+  floatparams["clump_dens_step"] = 0.2;
+  floatparams["clump_dens_min"] = -13.0;
+  floatparams["clump_dens_max"] = -4.0;
+  floatparams["clump_min_dist"] = 5.0;
+  floatparams["clump_min_star_dist"] = 25.0;
+
   return;
 }
 

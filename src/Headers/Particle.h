@@ -176,7 +176,8 @@ struct Particle
   FLOAT rad_pres[ndim];             ///< Acceleration from radiation pressure cmscott
   int ionstate;                     ///< States current ionisation state of the particle
                                     ///< (0 is neutral, 1 is smoothed and 2 is ionised)
-
+  FLOAT clump;                      ///< Clump flag. Non-zero values yield a density
+                                    ///< threshold to capture.
   Particle() {
     flags     = none;
     ptype     = gas_type;
@@ -216,6 +217,7 @@ struct Particle
     dt_therm  = (FLOAT) 0.0;
     vsig_max  = (FLOAT) 0.0;
     ionstate  = 0;
+    clump     = (FLOAT) 0.0;
   }
 
   static const int NDIM = ndim ;
